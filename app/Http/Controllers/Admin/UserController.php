@@ -7,6 +7,7 @@ use App\Helpers\ImageHelper;
 use App\Helpers\StaticHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Admin;
+use App\Models\Admin\Permissions\UserPermission;
 use App\Models\Admin\Role;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -18,11 +19,20 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    public function __construct(
+        private UserPermission $permission
+    )
+    {
+        $this->permission = $permission;
+    }
+
     /**
      * Display a listing of roles.
      */
     public function index(): View
     {
+        $this->permission->checkAuthResponse($this->permission->canViewUser());
+
          // Set breadcrumbs
         BreadcrumbHelper::set([
             (object) ['label' => 'HRM', 'url' => null],
@@ -39,6 +49,8 @@ class UserController extends Controller
      */
     public function create(): View
     {
+        $this->permission->checkAuthResponse($this->permission->canCreateUser());
+
         BreadcrumbHelper::set([
             (object) ['label' => 'HRM', 'url' => null],
             (object) ['label' => 'User Management', 'url' => route('admin.hrm.users.index')],
@@ -53,6 +65,8 @@ class UserController extends Controller
      */
     public function edit(string $id): View
     {
+        $this->permission->checkAuthResponse($this->permission->canUpdateUser());
+
         BreadcrumbHelper::set([
             (object) ['label' => 'HRM', 'url' => null],
             (object) ['label' => 'User Management', 'url' => route('admin.hrm.users.index')],
@@ -75,6 +89,8 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
+        $this->permission->checkAuthResponse($this->permission->canCreateUser());
+
         if($request->target){
             // come from edit request
             $email_validation = 'required|email|unique:users,email,'.$request->target;
@@ -165,6 +181,8 @@ class UserController extends Controller
      */
     public function updateStatus(Request $request, string $id)
     {
+        $this->permission->checkAuthResponse($this->permission->canUpdateUser());
+
         try {
             // Validate request
             $validator = Validator::make($request->all(), [

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Helpers\BreadcrumbHelper;
 use App\Http\Controllers\Controller;
+use App\Models\Admin\Permissions\RolePermission;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -11,11 +12,20 @@ use Illuminate\View\View;
 
 class RolePermissionController extends Controller
 {
+    public function __construct(
+        private RolePermission $permission
+    )
+    {
+        $this->permission = $permission;
+    }
+
     /**
      * Display a listing of roles.
      */
     public function index(): View
     {
+        $this->permission->checkAuthResponse($this->permission->canViewRoles());
+
         BreadcrumbHelper::set([
             (object) ['label' => 'Role Permission', 'url' => null]
         ]);
@@ -35,6 +45,8 @@ class RolePermissionController extends Controller
      */
     public function create(): View
     {
+         $this->permission->checkAuthResponse($this->permission->canCreateRole());
+
         BreadcrumbHelper::set([
             (object) ['label' => 'Role Permission', 'url' => null],
             (object) ['label' => 'Create Role', 'url' => route('admin.role-permissions.index')]
@@ -48,6 +60,8 @@ class RolePermissionController extends Controller
      */
     public function edit(string $id): View
     {
+         $this->permission->checkAuthResponse($this->permission->canUpdateRole());
+
         BreadcrumbHelper::set([
             (object) ['label' => 'Role Permission', 'url' => null],
             (object) ['label' => 'Edit Role', 'url' => route('admin.role-permissions.index')]
@@ -74,6 +88,8 @@ class RolePermissionController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
+         $this->permission->checkAuthResponse($this->permission->canCreateRole());
+
         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:roles,name,' . $request->role_id,
             'code' => 'required|string|max:255|unique:roles,code,' . $request->role_id,

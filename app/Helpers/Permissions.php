@@ -2,8 +2,10 @@
 
 namespace App\Helpers;
 
+use App\Models\Admin\Permissions\AdminPermission;
 use App\Models\Admin\Permissions\DashboardPermission;
 use App\Models\Admin\Permissions\RolePermission;
+use App\Models\Admin\Permissions\UserPermission;
 
 class Permissions
 {
@@ -44,6 +46,26 @@ class Permissions
                     RolePermission::PERMISSION_EDIT,
                     RolePermission::PERMISSION_DELETE,
                     RolePermission::PERMISSION_SUPER_ADMIN,
+                ],
+            ],
+            [
+                'group_name' => 'admin',
+                'permissions' => [
+                    AdminPermission::PERMISSION_CREATE,
+                    AdminPermission::PERMISSION_VIEW,
+                    AdminPermission::PERMISSION_EDIT,
+                    AdminPermission::PERMISSION_DELETE,
+                    AdminPermission::PERMISSION_STATUS,
+                ],
+            ],
+            [
+                'group_name' => 'user',
+                'permissions' => [
+                    UserPermission::PERMISSION_CREATE,
+                    UserPermission::PERMISSION_VIEW,
+                    UserPermission::PERMISSION_EDIT,
+                    UserPermission::PERMISSION_DELETE,
+                    UserPermission::PERMISSION_STATUS,
                 ],
             ],
         ];

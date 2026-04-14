@@ -86,7 +86,7 @@
                                     name="role"
                                     id="role"
                                     :options="$roles"
-                                    :selected="$admin->role_id ?? ''"
+                                    :selected="$currentRoleId ?? ''"
                                     placeholder="Select Role"
                                 />
                                 <x-input-error :messages="$errors->get('role')" class="mt-2" />

@@ -32,7 +32,7 @@ abstract class PermissionChecker
      */
     protected function hasPermissions(string|array $permissions): bool
     {
-        return $this->getAuthUser()->hasAnyPermission((array) $permissions);
+        return $this->getAuthUser()->canAny((array) $permissions);
     }
 
     /**
@@ -41,7 +41,6 @@ abstract class PermissionChecker
     protected function getAuthUser(): Authenticatable
     {
         $user = Auth::guard('admin')->user(); // ✅ admin guard
-
         if (!$user) {
             throw new AuthorizationException(
                 __('Please login as admin to perform this action.')

@@ -18,7 +18,8 @@ class PermissionSeeder extends Seeder
             for ($j = 0; $j < count($permissions[$i]['permissions']); $j++) {
                 Permission::updateOrCreate(['name' => $permissions[$i]['permissions'][$j], 'group_name' => $permissionGroup],[
                     'name' => $permissions[$i]['permissions'][$j],
-                    'group_name' => $permissionGroup
+                    'group_name' => $permissionGroup,
+                    'guard_name' => 'admin'
                 ]);
             }
         }

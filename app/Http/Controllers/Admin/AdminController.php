@@ -7,21 +7,32 @@ use App\Helpers\ImageHelper;
 use App\Helpers\StaticHelper;
 use App\Http\Controllers\Controller;
 use App\Models\Admin\Admin;
+use App\Models\Admin\Permissions\AdminPermission;
 use App\Models\Admin\Role;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Spatie\Permission\Models\Permission;
 
 class AdminController extends Controller
 {
+     public function __construct(
+        private AdminPermission $permission
+    )
+    {
+        $this->permission = $permission;
+    }
+
     /**
      * Display a listing of roles.
      */
     public function index(): View
     {
+        $this->permission->checkAuthResponse($this->permission->canViewAdmins());
          // Set breadcrumbs
         BreadcrumbHelper::set([
             (object) ['label' => 'HRM', 'url' => null],
@@ -39,6 +50,8 @@ class AdminController extends Controller
      */
     public function create(): View
     {
+        $this->permission->checkAuthResponse($this->permission->canCreateAdmin());
+
         BreadcrumbHelper::set([
             (object) ['label' => 'HRM', 'url' => null],
             (object) ['label' => 'Admin Management', 'url' => route('admin.hrm.admins.index')],
@@ -53,6 +66,8 @@ class AdminController extends Controller
      */
     public function edit(string $id): View
     {
+        $this->permission->checkAuthResponse($this->permission->canUpdateAdmin());
+
         BreadcrumbHelper::set([
             (object) ['label' => 'HRM', 'url' => null],
             (object) ['label' => 'Admin Management', 'url' => route('admin.hrm.admins.index')],
@@ -63,8 +78,10 @@ class AdminController extends Controller
         if(!$admin){
             abort(404, 'Admin not found');
         }
+         // Get the current role ID (Spatie stores roles in many-to-many)
+         $currentRoleId = $admin->roles->first()?->id ?? null;
         $roles = Role::select('id', 'name')->get();
-        return view('admin.pages.admins.form', compact('roles','admin'));
+        return view('admin.pages.admins.form', compact('roles','admin', 'currentRoleId'));
     }
 
     /**
@@ -76,6 +93,8 @@ class AdminController extends Controller
      */
     public function store(Request $request)
     {
+        $this->permission->checkAuthResponse($this->permission->canCreateAdmin());
+
         if($request->target){
             // come from edit request
             $email_validation = 'required|email|unique:admins,email,'.$request->target;
@@ -129,7 +148,6 @@ class AdminController extends Controller
         // if come from create form
         if(!$request->target){
             $validated['password'] = Hash::make($validated['password']);
-            $validated['role_id'] = $validated['role'];
             $validated['status'] = true;
         }else{
             unset($validated['password']);
@@ -139,8 +157,19 @@ class AdminController extends Controller
 
 
         try {
-            Admin::updateOrCreate(['id' => $request->target], $validated);
-            return redirect()->route('admin.hrm.admins.index')->with(['success' => 'Admin Created Successfull']);
+            $admin = Admin::updateOrCreate(
+                ['id' => $request->target],
+                $validated
+            );
+
+            if (!empty($validated['role'])) {
+                $admin->syncRoles(Role::findById($validated['role']));
+            }
+
+            return redirect()
+                ->route('admin.hrm.admins.index')
+                ->with(['success' => 'Admin saved successfully']);
+
         } catch (\Exception $e) {
             return back()->with(['error' => SOMETHING_WRONG]);
         }
@@ -157,6 +186,8 @@ class AdminController extends Controller
      */
     public function updateStatus(Request $request, string $id)
     {
+        $this->permission->checkAuthResponse($this->permission->canUpdateAdmin());
+
         try {
             // Validate request
             $validator = Validator::make($request->all(), [

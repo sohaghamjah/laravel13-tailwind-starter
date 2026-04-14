@@ -9,8 +9,9 @@ use Spatie\Permission\Traits\HasRoles;
 
 class Admin extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasRoles;
+
+    protected string $guard_name = 'admin';
 
     protected $guarded = ['id'];
 
@@ -19,12 +20,6 @@ class Admin extends Authenticatable
         'remember_token'
     ];
 
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
     protected function casts(): array
     {
         return [
@@ -38,10 +33,8 @@ class Admin extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id');
     }
 
-    public function getFullNameAttribute(){
-        return $this->first_name .' '. $this->last_name;
+    public function getFullNameAttribute()
+    {
+        return $this->first_name . ' ' . $this->last_name;
     }
-
-
-
 }
