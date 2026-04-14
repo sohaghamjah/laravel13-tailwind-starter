@@ -25,7 +25,7 @@ Route::prefix('admin')->as('admin.')->group(function () {
             return view('admin.pages.dashboard');
         })->name('dashboard');
 
-        Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+        Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
         Route::resource('role-permissions', RolePermissionController::class);
 

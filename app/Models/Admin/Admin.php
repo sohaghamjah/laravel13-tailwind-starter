@@ -38,5 +38,10 @@ class Admin extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id');
     }
 
-    
+    public function getFullNameAttribute(){
+        return $this->first_name .' '. $this->last_name;
+    }
+
+
+
 }
