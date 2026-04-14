@@ -12,21 +12,21 @@
             <div class="rounded-2xl border border-gray-200 bg-white dark:border-gray-800 dark:bg-white/[0.03]">
                 <div class="flex items-center justify-between px-5 py-2 sm:px-3 sm:py-3 border-b border-gray-200 dark:border-gray-800">
                     <h3 class="text-base font-medium text-gray-800 dark:text-white/90">
-                        Admin Management
+                        User Management
                     </h3>
 
                     <x-action-button
                         icon="plus"
                         variant="primary"
-                        label="Add New Admin"
-                        href="{{ route('admin.hrm.admins.create') }}"
+                        label="Add New User"
+                        href="{{ route('admin.hrm.users.create') }}"
                     />
                 </div>
 
                 <div class="border-t border-gray-100 dark:border-gray-800 mt-3"></div>
                 <div class="overflow-hidden  bg-white dark:bg-white/[0.03] mb-3">
                     <div class="max-w-full overflow-x-auto">
-                        <table class="min-w-full p-2" id="adminTable">
+                        <table class="min-w-full p-2" id="userTable">
                             <!-- table header start -->
                             <thead>
                                 <tr class="border-b border-gray-100 dark:border-gray-800">
@@ -106,27 +106,27 @@
 
                             <!-- table body start -->
                             <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
-                                @forelse($admins as $key => $admin)
+                                @forelse($users as $key => $user)
                                     <tr>
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center">
                                                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">
-                                                    {{ $key + $admins->firstItem() }}
+                                                    {{ $key + $users->firstItem() }}
                                                 </p>
                                             </div>
                                         </td>
 
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center">
-                                                 @if ($admin->image && Storage::disk('public')->exists(filesPath('admins')))
-                                                    <img src="{{ Storage::url(filesPath('admins'). '/'. $admin->image) }}"
-                                                        alt="{{ $admin->first_name }}"
+                                                @if ($user->image && Storage::disk('public')->exists(filesPath('users')))
+                                                    <img src="{{ Storage::url(filesPath('users'). '/'. $user->image) }}"
+                                                        alt="{{ $user->first_name }}"
                                                         class="w-10 h-10 rounded-full object-cover">
                                                 @else
                                                     <div
                                                         class="flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800">
                                                         <span class="text-sm font-medium text-gray-600 dark:text-gray-300">
-                                                            {{ strtoupper(substr($admin->first_name, 0, 1)) }}{{ strtoupper(substr($admin->last_name, 0, 1)) }}
+                                                            {{ strtoupper(substr($user->first_name, 0, 1)) }}{{ strtoupper(substr($user->last_name, 0, 1)) }}
                                                         </span>
                                                     </div>
                                                 @endif
@@ -136,7 +136,7 @@
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center">
                                                 <p class="text-gray-800 text-theme-sm font-medium dark:text-white/90">
-                                                    {{ $admin->first_name }} {{ $admin->last_name }}
+                                                    {{ $user->first_name }} {{ $user->last_name }}
                                                 </p>
                                             </div>
                                         </td>
@@ -144,7 +144,7 @@
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center">
                                                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">
-                                                    {{ $admin->email }}
+                                                    {{ $user->email }}
                                                 </p>
                                             </div>
                                         </td>
@@ -152,26 +152,26 @@
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center">
                                                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">
-                                                    {{ $admin->phone ?? 'N/A' }}
+                                                    {{ $user->phone ?? 'N/A' }}
                                                 </p>
                                             </div>
                                         </td>
 
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center">
-                                                <x-badge type="primary">{{ $admin->role->name ?? 'No Role' }}</x-badge>
+                                                <x-badge type="primary">{{ $user->role->name ?? 'No Role' }}</x-badge>
                                             </div>
                                         </td>
 
                                         <td class="px-5 py-4 sm:px-6">
-                                            <div x-data="{ switcherToggle: {{ $admin->status ? 'true' : 'false' }} }">
+                                            <div x-data="{ switcherToggle: {{ $user->status ? 'true' : 'false' }} }">
                                                 <label class="flex cursor-pointer items-center gap-3 text-sm font-medium text-gray-700 select-none dark:text-gray-400">
                                                     <div class="relative">
                                                         <input type="checkbox"
-                                                            class="sr-only toggle-status"
-                                                            data-admin-id="{{ $admin->id }}"
+                                                            class="sr-only toggle-status-user"
+                                                            data-id="{{ $user->id }}"
                                                             :checked="switcherToggle"
-                                                            @change="switcherToggle = !switcherToggle; $dispatch('status-changed', { adminId: {{ $admin->id }}, status: !switcherToggle })" />
+                                                            @change="switcherToggle = !switcherToggle; $dispatch('status-changed', { userId: {{ $user->id }}, status: !switcherToggle })" />
                                                         <div class="block h-6 w-11 rounded-full"
                                                             :class="switcherToggle ? 'bg-brand-500 dark:bg-brand-500' : 'bg-gray-200 dark:bg-white/10'">
                                                         </div>
@@ -186,7 +186,7 @@
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center">
                                                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">
-                                                    {{ $admin->last_logged_in ? date('d M, Y h:i A', strtotime($admin->last_logged_in)) : 'Never' }}
+                                                    {{ $user->last_logged_in ? date('d M, Y h:i A', strtotime($user->last_logged_in)) : 'Never' }}
                                                 </p>
                                             </div>
                                         </td>
@@ -194,21 +194,21 @@
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center">
                                                 <p class="text-gray-500 text-theme-sm dark:text-gray-400">
-                                                    {{ $admin->created_at ? date('d M, Y', strtotime($admin->created_at)) : 'N/A' }}
+                                                    {{ $user->created_at ? date('d M, Y', strtotime($user->created_at)) : 'N/A' }}
                                                 </p>
                                             </div>
                                         </td>
 
                                         <td class="px-5 py-4 sm:px-6">
                                             <div class="flex items-center gap-2">
-                                                <a href="{{ route('admin.hrm.admins.edit', $admin->id) }}"
+                                                <a href="{{ route('admin.hrm.users.edit', $user->id) }}"
                                                     class="inline-flex items-center justify-center p-2 text-gray-500 transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400">
                                                     <i data-lucide="edit" class="w-4 h-4"></i>
                                                 </a>
 
-                                                @if ($admin->deletable && $admin->id != auth()->id())
+                                                @if ($user->deletable && $user->id != auth()->id())
                                                     <button type="button"
-                                                        onclick="confirmDelete('{{ $admin->id }}', '{{ $admin->first_name }} {{ $admin->last_name }}')"
+                                                        onclick="confirmDelete('{{ $user->id }}', '{{ $user->first_name }} {{ $user->last_name }}')"
                                                         class="inline-flex items-center justify-center p-2 text-gray-500 transition rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-gray-400">
                                                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                                                     </button>
@@ -217,29 +217,21 @@
                                         </td>
                                     </tr>
                                 @empty
-                                    <tr>
-                                        <td colspan="11" class="px-5 py-12 text-center sm:px-6">
-                                            <div class="flex flex-col items-center justify-center">
-                                                <i data-lucide="users"
-                                                    class="w-12 h-12 text-gray-400 dark:text-gray-600"></i>
-                                                <p class="mt-3 text-gray-500 dark:text-gray-400">No admins found</p>
-                                                <a href="{{ route('admin.hrm.admins.create') }}"
-                                                    class="mt-3 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
-                                                    <i data-lucide="plus" class="w-4 h-4"></i>
-                                                    <span>Create First Admin</span>
-                                                </a>
-                                            </div>
-                                        </td>
-                                    </tr>
+                                    <x-empty-state
+                                    colspan="10"
+                                    title="No data found"
+                                    description="Get started by creating your first data"
+                                    buttonLink="{{ route('admin.hrm.users.create') }}"
+                                    buttonText="Create First" />
                                 @endforelse
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Pagination -->
-                    @if ($admins->hasPages())
+                    @if ($users->hasPages())
                         <div class="px-5 py-4 border-t border-gray-100 dark:border-gray-800 sm:px-6">
-                            {{ $admins->links() }}
+                            {{ $users->links() }}
                         </div>
                     @endif
                 </div>
@@ -253,7 +245,7 @@
 <script>
     $(document).ready(function() {
         // Initialize DataTable
-        var table = $('#adminTable').DataTable({
+        var table = $('#userTable').DataTable({
             processing: true,
             responsive: true,
             pageLength: 10,
@@ -267,18 +259,20 @@
         });
 
         // Handle status toggle change
-        $(document).on('change', '.toggle-status', function() {
+        $(document).on('change', '.toggle-status-user', function() {
             var checkbox = $(this);
-            var adminId = checkbox.data('admin-id');
+            var userId = checkbox.data('id');
             var newStatus = checkbox.prop('checked') ? 1 : 0;
             var originalStatus = !newStatus;
+            console.log(userId);
+
 
             // Show loading state
             checkbox.prop('disabled', true);
 
             // Send AJAX request
             $.ajax({
-                url: '/admin/hrm/admins/update-status/' + adminId,
+                url: '/admin/hrm/users/update-status/' + userId,
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',

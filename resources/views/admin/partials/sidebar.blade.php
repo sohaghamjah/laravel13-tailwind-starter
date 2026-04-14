@@ -73,10 +73,19 @@
                                 <li>
                                     <a href="{{ route('admin.hrm.admins.index') }}"
                                         class="menu-dropdown-item flex items-center gap-3 px-4 py-2 text-sm rounded-lg transition-colors text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
-                                        :class="page === 'ecommerce' ?
+                                        :class="page === 'admin' ?
                                             'menu-dropdown-item-active bg-primary-50 text-primary-600' : ''">
                                         <i data-lucide="user-cog" class="w-4 h-4"></i>
                                         Admins
+                                    </a>
+                                </li>
+                                 <li>
+                                    <a href="{{ route('admin.hrm.users.index') }}"
+                                        class="menu-dropdown-item flex items-center gap-3 px-4 py-2 text-sm rounded-lg transition-colors text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-gray-800"
+                                        :class="page === 'user' ?
+                                            'menu-dropdown-item-active bg-primary-50 text-primary-600' : ''">
+                                        <i data-lucide="user" class="w-4 h-4"></i>
+                                        Users
                                     </a>
                                 </li>
                             </ul>

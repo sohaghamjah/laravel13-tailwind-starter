@@ -1,3 +1,6 @@
+@php
+    $admin = Auth::guard('admin')->user();
+@endphp
 <header
   x-data="{menuToggle: false}"
   class="sticky top-0 z-99999 flex w-full border-gray-200 bg-white lg:border-b dark:border-gray-800 dark:bg-gray-900"
@@ -386,11 +389,16 @@
                   <span
                     class="relative z-1 block h-10 w-full max-w-10 rounded-full"
                   >
-                    <img
-                      src="{{asset('assets')}}/images/user/user-05.jpg"
-                      alt="User"
-                      class="overflow-hidden rounded-full"
-                    />
+                   @if($admin && $admin->image && Storage::disk('public')->exists(filesPath('admins') . '/' . $admin->image))
+                        <img src="{{ Storage::url(filesPath('admins') . '/' . $admin->image) }}"
+                            class="overflow-hidden rounded-full">
+                    @else
+                       <img
+                        src=" {{asset('assets')}}/images/user/user-05.jpg"
+                        alt="User"
+                        class="overflow-hidden rounded-full"
+                        />
+                    @endif
                     <span
                       class="bg-error-500 absolute right-0 bottom-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white dark:border-gray-900"
                     ></span>
@@ -554,11 +562,17 @@
                   <span
                     class="relative z-1 block h-10 w-full max-w-10 rounded-full"
                   >
-                    <img
-                      src="{{asset('assets')}}/images/user/user-05.jpg"
-                      alt="User"
-                      class="overflow-hidden rounded-full"
-                    />
+                    @if($admin && $admin->image && Storage::disk('public')->exists(filesPath('admins') . '/' . $admin->image))
+                        <img src="{{ Storage::url(filesPath('admins') . '/' . $admin->image) }}"
+                            class="overflow-hidden rounded-full">
+                    @else
+                       <img
+                        src=" {{asset('assets')}}/images/user/user-05.jpg"
+                        alt="User"
+                        class="overflow-hidden rounded-full"
+                        />
+                    @endif
+
                     <span
                       class="bg-error-500 absolute right-0 bottom-0 z-10 h-2.5 w-full max-w-2.5 rounded-full border-[1.5px] border-white dark:border-gray-900"
                     ></span>
@@ -613,10 +627,17 @@
           @click.prevent="dropdownOpen = ! dropdownOpen"
         >
           <span class="mr-3 h-11 w-11 overflow-hidden rounded-full">
-            <img src="{{asset('assets')}}/images/user/owner.jpg" alt="User" />
+            @if($admin && $admin->image && Storage::disk('public')->exists(filesPath('admins') . '/' . $admin->image))
+                <img src="{{ Storage::url(filesPath('admins') . '/' . $admin->image) }}">
+            @else
+                <img
+                src=" {{asset('assets')}}/images/user/owner.jpg"
+                alt="User"
+                />
+            @endif
           </span>
 
-          <span class="text-theme-sm mr-1 block font-medium"> Musharof </span>
+          <span class="text-theme-sm mr-1 block font-medium"> {{ $admin->first_name }} </span>
 
           <svg
             :class="dropdownOpen && 'rotate-180'"

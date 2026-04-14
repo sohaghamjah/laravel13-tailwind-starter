@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\Auth\LoginController;
 use App\Http\Controllers\Admin\Auth\RegisteredAdminController;
 use App\Http\Controllers\Admin\RolePermissionController;
+use App\Http\Controllers\Admin\UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -30,8 +31,13 @@ Route::prefix('admin')->as('admin.')->group(function () {
         Route::resource('role-permissions', RolePermissionController::class);
 
         Route::prefix('/hrm')->as('hrm.')->group(function () {
+            // Admins
             Route::resource('admins', AdminController::class);
             Route::post('admins/update-status/{id}', [AdminController::class, 'updateStatus'])->name('admins.status');
+            // Users
+
+            Route::resource('users', UserController::class);
+            Route::post('users/update-status/{id}', [UserController::class, 'updateStatus'])->name('admins.status');
         });
 
     });

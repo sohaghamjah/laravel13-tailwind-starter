@@ -53,7 +53,7 @@ class StaticHelper
      * @param string $table
      * @return string
      */
-    public static function generateUsername($first_name, $last_name, $table = "users")
+    public static function generateUsername($first_name, $last_name, $table = "users", $column_name = 'user_name')
     {
         // Make username Dynamically
         $generate_name_with_count = "";
@@ -88,7 +88,7 @@ class StaticHelper
             }
 
             // Find User is already exists or not
-            $chekUser = DB::table($table)->where('user_name', $generate_name)->first();
+            $chekUser = DB::table($table)->where($column_name, $generate_name)->first();
 
             if ($chekUser == null) {
                 $loop = false;
